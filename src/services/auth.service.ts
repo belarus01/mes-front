@@ -1,7 +1,7 @@
 import axios from "axios";
-const API_URL = "http://localhost:4000/api/auth";
+const API_URL = "http://192.168.150.29:4000/auth/";
 
-export default class AuthService{
+class AuthService{
     login(login:string, password:string){
         return axios
             .post(API_URL + "login", {
@@ -26,3 +26,5 @@ export default class AuthService{
         return null;
     }
 }
+
+export default new AuthService();

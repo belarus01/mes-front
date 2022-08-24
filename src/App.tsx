@@ -8,6 +8,7 @@ import {
 import Admin from './components/admin.component';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from './components/login.component';
+const liStyle = {padding:'10px'}
 class App extends Component{
   render() {
     return (
@@ -29,16 +30,11 @@ class App extends Component{
             </li>
           </div>
         </nav>
-        <div className="container mt-3">
-          <BrowserRouter>
-            <Routes>
+        <div className="container mt-3" style={liStyle}>
+          <Routes>
               <Route path='/login' element={<Login />}></Route>
               <Route path='/admin' element={<Admin />}></Route>
-            </Routes>
-          </BrowserRouter>
-           
-
-          
+          </Routes>   
         </div>
       </div>
     );
