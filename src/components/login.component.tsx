@@ -3,6 +3,8 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../services/auth.service";
+import Admin from "./admin.component";
+
 interface RouterProps {
   history: string;
 }
@@ -11,7 +13,8 @@ type State = {
   login:string,
   password:string,
   loading:boolean,
-  message:string
+  message:string,
+  redirect: boolean
 };
 
 export default class Login extends Component<Props, State>{
@@ -22,14 +25,10 @@ export default class Login extends Component<Props, State>{
       login:"",
       password:"",
       loading: false,
-      message:""
+      message:"",
+      redirect: false
     };
   }
-
-    goToProfile = () =>{
-      const nav = useNavigate();
-      nav('/profile');
-    }
 
     validationSchema() {
       return Yup.object().shape({
@@ -44,9 +43,12 @@ export default class Login extends Component<Props, State>{
         message: "",
         loading: true
       });
+
       AuthService.login(login, password).then(()=>{
-       this.goToProfile();
-        window.location.reload();
+        window.location.href = "/admin";
+       this.setState({
+        redirect: true
+       })
       },
       error => {
         const resMessage =
@@ -59,11 +61,9 @@ export default class Login extends Component<Props, State>{
           loading: false,
           message: resMessage
         });
-    });
-  }
+      });
+    }
     
-    
-
     render(){
         const { loading, message } = this.state;
         const initialValues = {
@@ -71,10 +71,11 @@ export default class Login extends Component<Props, State>{
             password: "",
         };
         
-        
         return(
-        <div className="col-md-12">
-          <div className="card card-container">
+        <div className="row">
+        
+          <div className="col-md-3"></div>
+          <div className=" col-md-6 card card-container">
             <Formik 
               initialValues={initialValues} 
               validationSchema={this.validationSchema} 
@@ -117,6 +118,7 @@ export default class Login extends Component<Props, State>{
               </Form>
             </Formik>
           </div>
+          <div className="col-md-3"></div>
         </div>
         );
     }
