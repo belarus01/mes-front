@@ -1,20 +1,69 @@
 import { Component, PropsWithChildren } from "react";
+import userService from "../services/user.service";
+import IUser from '../types/user.type';
 
 type Props = {};
-type State = {};
+type State = {
+    users: Array<IUser>,
+    selectedUser: IUser | null,
+    selectedIndex: number,
+    searchTitle: string
+};
+
+
+
 class Admin extends Component<Props, State>{
+    constructor(props: Props){
+        super(props);
+        this.getAllUsers = this.getAllUsers.bind(this);
+        this.refreshUsers = this.refreshUsers.bind(this);
+        this.state = {
+            users: [],
+            selectedUser: null,
+            selectedIndex: -1,
+            searchTitle: ""
+        }
+    };
 
     headers: { key: string; label: string }[] = [
-        { key: "id", label: "ID" },
-        { key: "first_name", label: "First name" },
-        { key: "last_name", label: "Last name" },
-        { key: "email", label: "Email" },
-        { key: "gender", label: "Gender" },
-        { key: "ip_address", label: "IP address" },
+        { key: "id", label: "№ пп" },
+        { key: "last_name", label: "Фамилия" },
+        { key: "first_name", label: "Имя" },
+        { key: "second_name", label: "Отчество" },
+        { key: "position", label: "Должность" },
+        { key: "phone", label: "Контактный телефон" },
+        { key: "login", label: "Логин" },
+        { key: "status", label: "Статуст" },
+        { key: "actions", label: "Действия" },
       ];
 
+    componentDidMount(){
+        this.getAllUsers();
+    }
+
+    getAllUsers(){
+        userService.getAllUsers()
+            .then(responce => {
+                this.setState({
+                    users: responce.data
+                });
+                console.log(responce.data);
+        })
+        .catch((e:Error)=>{
+            console.log(e);
+        })
+    }
+    
+    refreshUsers(){
+        this.getAllUsers();
+    }
+
+    deleteUser(index: number){
+        userService.deleteUser(index);
+    }
+
     render(){
-        data = 
+        const data = userService.getAllUsers;
         return(
             <table>
                 <thead>
@@ -28,7 +77,22 @@ class Admin extends Component<Props, State>{
                 </thead>
 
                 <tbody>
-                    {}
+                    {this.state.users.map(user=>{
+                        return (
+                            <tr key={user.id}>
+                                <td>{user.id}</td>
+                                <td>{user.lastName}</td>
+                                <td>{user.firstName}</td>
+                                <td>{user.secondName}</td>
+                                <td>{user.position}</td>
+                                <td>{user.phone}</td>
+                                <td>{user.login}</td>
+                                <td></td>
+                                <td>Keys</td>
+                            </tr>
+                            
+                        );
+                    })}
                 </tbody>
             </table>
         );
