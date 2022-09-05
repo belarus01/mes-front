@@ -7,6 +7,7 @@ const API_URL = "http://192.168.150.29:4000/users";
 class UserService{
 
     getAllUsers(){
+        console.log(authHeader());
         return axios.get<Array<IUser>>(API_URL, {headers: authHeader()});
     }
 

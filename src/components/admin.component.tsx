@@ -47,7 +47,7 @@ class Admin extends Component<Props, State>{
                 this.setState({
                     users: responce.data
                 });
-                console.log(responce.data);
+                console.log("data - " + responce.data);
         })
         .catch((e:Error)=>{
             console.log(e);
