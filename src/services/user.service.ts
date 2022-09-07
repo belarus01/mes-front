@@ -2,7 +2,7 @@ import axios from "axios";
 import IUser from "../types/user.type";
 import authHeader from './auth-header';
 import ICreateUser from '../types/create-user.type';
-const API_URL = "http://192.168.150.29:4000/users";
+const API_URL = "http://192.168.150.13:4000/users";
 
 class UserService{
 
