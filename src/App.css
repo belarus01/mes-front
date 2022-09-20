@@ -1,1 +1,6 @@
 @import '~antd/dist/antd.css';
+
+login-card{
+    padding-top: 20px;
+    margin-top: 20px;
+}
