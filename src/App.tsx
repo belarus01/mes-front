@@ -45,15 +45,20 @@ class App extends Component{
       {
         label: "Пользователи", 
         key:"users",
-        onClick:()=>{ window.location.href = "/admin"; Router.} 
+        onClick:()=>{ window.location.href = "/admin"; } 
+      },
+      {
+        label: "Подразделения", 
+        key:"groups",
+        onClick:()=>{ window.location.href = "/grops"; } 
       }
     ];
 
     return(
       <Layout className='layout'>
         <Header>
-          <div className='logo'/>
-          <Menu theme='dark' mode='horizontal' defaultSelectedKeys={['1']} items={menu}>
+          <div className='logo' />
+          <Menu theme='dark' mode='horizontal' defaultSelectedKeys={['0']} items={menu}>
           
           </Menu>
         </Header>
@@ -67,7 +72,7 @@ class App extends Component{
           </Col>
         </Row>
         </Content>
-        <Footer style={{textAlign:'center'}}>Ant Design ©2018 Created by Ant </Footer>
+        <Footer style={{textAlign:'center'}}>АПК КНО ©2022 НИИТЗИ </Footer>
       </Layout>
     );
   }

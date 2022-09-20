@@ -1,4 +1,4 @@
-import { Cascader, DatePicker, Form, InputNumber, Modal, Radio, Select, Switch, TreeSelect } from "antd";
+import { Cascader, Checkbox, DatePicker, Form, InputNumber, Modal, Radio, Select, Switch, TreeSelect } from "antd";
 import { Component, PropsWithChildren } from "react";
 import userService from "../services/user.service";
 import IUser from '../types/user.type';
@@ -7,15 +7,26 @@ import { Space, Table, Tag } from 'antd';
 import React from 'react';
 import { Button, Input } from "antd";
 import UserModal from "../add-edit.user.modal";
+import ICreateUser from '../types/create-user.type';
 
 type Props = {};
 type State = {
-    users: Array<IUser>,
+    users: Array<ICreateUser>,
     selectedUser: IUser | null,
     selectedIndex: number,
     searchTitle: string,
     isEditing: boolean,
-    addModalOpen: boolean
+    isAdded: boolean,
+    addModalOpen: boolean,
+    login: string;
+    password: string;
+    firstName: string;
+    secondName: string;
+    lastName: string;
+    phone: string;
+    position: string;
+    role: string;
+
 };
 
 class Admin extends Component<Props, State>{
@@ -23,13 +34,23 @@ class Admin extends Component<Props, State>{
         super(props);
         this.getAllUsers = this.getAllUsers.bind(this);
         this.refreshUsers = this.refreshUsers.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.state = {
             users: [],
             selectedUser: null,
             selectedIndex: -1,
             searchTitle: "",
             isEditing: false,
-            addModalOpen:false
+            isAdded:false,
+            addModalOpen:false,
+            login: "",
+            password: "",
+            firstName: "",
+            secondName: "",
+            lastName: "",
+            phone: "",
+            position: "",
+            role: ""
         }
     };
 
@@ -91,7 +112,7 @@ class Admin extends Component<Props, State>{
                         }}
                         style={{color:"red", marginLeft: 12}}
                     />
-                    <Switch style={{marginLeft: 12}}></Switch>
+                    <Switch defaultChecked style={{marginLeft: 12}}></Switch>
                     </>
                 )
             }
@@ -121,6 +142,7 @@ class Admin extends Component<Props, State>{
             cancelText:"Отмена",
             okType:"danger",
             onOk:()=>{
+                console.log(user.id);
                 userService.deleteUser(user.id);
                 this.refreshUsers();
             }
@@ -131,14 +153,57 @@ class Admin extends Component<Props, State>{
         this.getAllUsers();
     }
 
+    onAddUser(){
+      this.setState({
+        addModalOpen: true,
+        isAdded: true,
+        isEditing: false,
+        selectedUser: null
+      })
+    }
     addUser(){
+      const user = {} as ICreateUser;
+      user.firstName = this.state.firstName;
+      user.secondName = this.state.secondName;
+      user.lastName = this.state.lastName;
+      user.login = this.state.login;
+      user.password = this.state.password;
+      user.phone = this.state.phone;
+      user.position = "Администратор безопасности";
+      user.role = "syperadmin";
+      console.log(user.firstName);
+      if(this.state.isAdded === true){
+      console.log("added");
+      const arr = this.state.users;
+      arr.push(user);
+      console.log(arr);
+      this.setState({...this.state, users: arr})
+       // userService.createUser(user);
+      }
 
+      else if(this.state.isEditing === true){
+        const users1 = this.state.users;
+        const newUsers = users1.map(obj=>{
+          if(obj.login === this.state.selectedUser?.login)
+            obj = user;
+        });
+        this.setState({...this.state, users: newUsers as unknown as ICreateUser[]})
+      }
+      
+       //userService.updateUser(user);
+      
+      this.setState({
+        addModalOpen: false,
+        isAdded: false,
+        isEditing: false,
+        selectedUser: null
+      })
     }
 
     getAllUsers(){
         userService.getAllUsers()
             .then(responce => {
-                this.setState({
+                this.setState({...this.state,
                     users: responce.data
                 });
                 console.log("data - " + responce.data);
@@ -156,71 +221,77 @@ class Admin extends Component<Props, State>{
         userService.deleteUser(index);
     }
 
+    handleChange(event: any){
+      this.setState({...this.state, [event.currentTarget.name]: event.currentTarget.value});
+    }
+
     render(){
         return(
-            <div>
-                <Button onClick={()=>{this.addUser();}}>Добавить пользователя</Button>
-                <Table columns={this.columns} dataSource={this.state.users}></Table>
-                <Modal centered open={this.state.addModalOpen} onCancel={()=>this.cancelEdit()} onOk={()=>this.addUser}>
+            <Space direction="vertical" size="middle" style={{display:'flex'}}>
+                <Button onClick={()=>{this.setState({isAdded: true, addModalOpen: true})}}>Добавить пользователя</Button>
+                
+                <Table columns={this.columns} dataSource={[...this.state.users]} ></Table>
+                <Modal okText="Создать" cancelText="Отмена" title="Создание пользователя АПК КНО" centered open={this.state.addModalOpen} onCancel={()=>this.cancelEdit()} onOk={()=>this.addUser()}>
                 <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
       >
-        <Form.Item label="Form Size" name="size">
-          <Radio.Group>
-            <Radio.Button value="small">Small</Radio.Button>
-            <Radio.Button value="default">Default</Radio.Button>
-            <Radio.Button value="large">Large</Radio.Button>
-          </Radio.Group>
+        
+        <Form.Item label="Фамилия">
+          <Input name="lastName" onChange={this.handleChange} defaultValue={this.state.selectedUser?.lastName}/>
         </Form.Item>
-        <Form.Item label="Input">
-          <Input />
+        <Form.Item label="Имя">
+          <Input name="firstName" onChange={this.handleChange} defaultValue={this.state.selectedUser?.firstName} />
         </Form.Item>
-        <Form.Item label="Select">
-          <Select>
-            <Select.Option value="demo">Demo</Select.Option>
+        <Form.Item label="Отчество">
+          <Input name="secondName" onChange={this.handleChange} defaultValue={this.state.selectedUser?.secondName}/>
+        </Form.Item>
+        <Form.Item label="Телефон">
+          <Input name="phone" onChange={this.handleChange} defaultValue={this.state.selectedUser?.phone} />
+        </Form.Item>
+        <Form.Item label="Логин">
+          <Input name="login" onChange={this.handleChange} defaultValue={this.state.selectedUser?.login}/>
+        </Form.Item>
+        <Form.Item label="Пароль">
+          <Input name="password" onChange={this.handleChange} defaultValue={this.state.selectedUser?.password}/>
+        </Form.Item>
+        <Form.Item label="Должность">
+          <Select  defaultValue={this.state.selectedUser?.position}>
+            <Select.Option value="1">Специалист</Select.Option>
+            <Select.Option value="2">Ведущий специалист</Select.Option>
+            <Select.Option value="3">Начальник подразделения</Select.Option>
           </Select>
         </Form.Item>
-        <Form.Item label="TreeSelect">
+        <Form.Item label="Подразделение">
           <TreeSelect
             treeData={[
-              { title: 'Light', value: 'light', children: [{ title: 'Bamboo', value: 'bamboo' }] },
+              { title: 'Минск', value: 'light', children: [{ title: 'Главное управление', value: 'bamboo' }] },
             ]}
           />
         </Form.Item>
-        <Form.Item label="Cascader">
-          <Cascader
-            options={[
-              {
-                value: 'zhejiang',
-                label: 'Zhejiang',
-                children: [
-                  {
-                    value: 'hangzhou',
-                    label: 'Hangzhou',
-                  },
-                ],
-              },
-            ]}
-          />
+        <Form.Item>
+          <Checkbox>Администратор безопасности</Checkbox>
         </Form.Item>
-        <Form.Item label="DatePicker">
-          <DatePicker />
+        <Form.Item>
+          <Checkbox>Администратор</Checkbox>
         </Form.Item>
-        <Form.Item label="InputNumber">
-          <InputNumber />
+        <Form.Item>
+          <Checkbox>Администратор АПК КНО</Checkbox>
         </Form.Item>
-        <Form.Item label="Switch" valuePropName="checked">
-          <Switch />
+        <Form.Item>
+          <Checkbox>Пользователь</Checkbox>
         </Form.Item>
-        <Form.Item label="Button">
-          <Button>Button</Button>
+        <Form.Item>
+          <Checkbox>Контролер</Checkbox>
+        </Form.Item>
+        <Form.Item>
+          <Checkbox>Аудитор</Checkbox>
         </Form.Item>
       </Form>
 
                 </Modal>
-            </div>
+                </Space>
 
         );
     }
@@ -230,8 +301,5 @@ class Admin extends Component<Props, State>{
             addModalOpen: false
         })
     }
-
-
-
 }
 export default Admin;

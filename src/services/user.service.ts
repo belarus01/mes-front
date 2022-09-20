@@ -12,14 +12,15 @@ class UserService{
     }
 
     createUser(user: ICreateUser){
-        return axios.post(API_URL, {headers: authHeader()});
+        return axios.post(API_URL, {user}, {headers: authHeader()});
     }
 
-    updateUser(user: IUser){
+    updateUser(user: ICreateUser){
         return axios.put(API_URL, {headers: authHeader()});
     }
 
     deleteUser(id: number){
+        console.log((API_URL+`/${id}`));
         return axios.delete(API_URL+`/${id}`, {headers: authHeader()});
     }
 

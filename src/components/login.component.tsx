@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../services/auth.service";
 import Admin from "./admin.component";
+import { Card, Col, Row } from "antd";
 
 interface RouterProps {
   history: string;
@@ -72,16 +73,17 @@ export default class Login extends Component<Props, State>{
         };
         
         return(
-        <div className="row">
-        
-          <div className="col-md-3"></div>
-          <div className=" col-md-6 card card-container">
-            <Formik 
+          <Row>
+            <Col span={6}></Col>
+            <Col span={12}>
+            <Card title="Вход в АПК КНО" style={{margin:'50px'}}>
+           
+            <Formik
               initialValues={initialValues} 
               validationSchema={this.validationSchema} 
               onSubmit={this.handleLogin}
             >
-              <Form>
+              <Form >
                 <div className="form-group">
                   <label htmlFor="login">Логин</label>
                   <Field name="login" type="text" className="form-control" />
@@ -117,9 +119,10 @@ export default class Login extends Component<Props, State>{
               )}
               </Form>
             </Formik>
-          </div>
-          <div className="col-md-3"></div>
-        </div>
+            </Card>
+            </Col>
+            
+          </Row>
         );
     }
 }
